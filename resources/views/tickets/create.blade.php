@@ -38,21 +38,33 @@
                         </div>
                     </div>
 
-                    {{-- Priority --}}
-                    <div>
-                        <label class="block text-sm font-bold text-gray-800 mb-3">Priority</label>
-                        <div class="flex flex-wrap gap-3">
-                            @foreach (['Low' => 'green', 'Medium' => 'amber', 'High' => 'orange', 'Critical' => 'red'] as $level => $color)
-                            <label class="flex items-center gap-2 border-2 rounded-full px-5 py-2.5 cursor-pointer hover:border-gray-400 has-[:checked]:border-{{ $color }}-600 has-[:checked]:bg-{{ $color }}-50">
-                                <input type="radio" name="priority" value="{{ $level }}" class="hidden"
-                                    {{ old('priority', 'Medium') === $level ? 'checked' : '' }} required>
-                                <span class="w-2 h-2 rounded-full bg-{{ $color }}-600"></span>
-                                <span class="text-sm font-bold text-gray-700">{{ $level }}</span>
-                            </label>
-                            @endforeach
-                        </div>
-                        <p class="text-sm text-gray-500 mt-2">Critical: production line or point-of-sale is down. Choose this only if work has stopped.</p>
-                    </div>
+                   {{-- Priority --}}
+<div>
+    <label class="block text-sm font-bold text-gray-800 mb-3">Priority</label>
+    <div class="flex flex-wrap gap-3">
+        <label class="flex items-center gap-2 border-2 rounded-full px-5 py-2.5 cursor-pointer hover:border-gray-400 has-[:checked]:border-green-600 has-[:checked]:bg-green-50">
+            <input type="radio" name="priority" value="Low" class="hidden" {{ old('priority', 'Medium') === 'Low' ? 'checked' : '' }} required>
+            <span class="w-2 h-2 rounded-full bg-green-600"></span>
+            <span class="text-sm font-bold text-gray-700">Low</span>
+        </label>
+        <label class="flex items-center gap-2 border-2 rounded-full px-5 py-2.5 cursor-pointer hover:border-gray-400 has-[:checked]:border-amber-600 has-[:checked]:bg-amber-50">
+            <input type="radio" name="priority" value="Medium" class="hidden" {{ old('priority', 'Medium') === 'Medium' ? 'checked' : '' }} required>
+            <span class="w-2 h-2 rounded-full bg-amber-600"></span>
+            <span class="text-sm font-bold text-gray-700">Medium</span>
+        </label>
+        <label class="flex items-center gap-2 border-2 rounded-full px-5 py-2.5 cursor-pointer hover:border-gray-400 has-[:checked]:border-orange-600 has-[:checked]:bg-orange-50">
+            <input type="radio" name="priority" value="High" class="hidden" {{ old('priority', 'Medium') === 'High' ? 'checked' : '' }} required>
+            <span class="w-2 h-2 rounded-full bg-orange-600"></span>
+            <span class="text-sm font-bold text-gray-700">High</span>
+        </label>
+        <label class="flex items-center gap-2 border-2 rounded-full px-5 py-2.5 cursor-pointer hover:border-gray-400 has-[:checked]:border-red-600 has-[:checked]:bg-red-50">
+            <input type="radio" name="priority" value="Critical" class="hidden" {{ old('priority', 'Medium') === 'Critical' ? 'checked' : '' }} required>
+            <span class="w-2 h-2 rounded-full bg-red-600"></span>
+            <span class="text-sm font-bold text-gray-700">Critical</span>
+        </label>
+    </div>
+    <p class="text-sm text-gray-500 mt-2">Critical: production line or point-of-sale is down. Choose this only if work has stopped.</p>
+</div>
 
                     {{-- Subject --}}
                     <div>
