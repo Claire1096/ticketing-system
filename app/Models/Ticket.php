@@ -19,11 +19,13 @@ class Ticket extends Model
         'assigned_to',
         'technician_remarks',
         'resolved_at',
+        'first_response_at',
     ];
 
     protected $casts = [
-        'resolved_at' => 'datetime',
-    ];
+    'resolved_at' => 'datetime',
+    'first_response_at' => 'datetime',
+];
 
     public function submittedBy()
     {

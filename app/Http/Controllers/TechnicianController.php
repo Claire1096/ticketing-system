@@ -17,10 +17,22 @@ class TechnicianController extends Controller
 
         $avgResolutionHours = Ticket::whereNotNull('resolved_at')
             ->get()
-            ->avg(fn ($t) => $t->created_at->diffInHours($t->resolved_at));
+            ->avg(fn ($t) => $t->created_at->diffInMinutes($t->resolved_at) / 60);
+
+        $avgResponseHours = Ticket::whereNotNull('first_response_at')
+            ->get()
+            ->avg(fn ($t) => $t->created_at->diffInMinutes($t->first_response_at) / 60);
+
+        $categoryCounts = Ticket::selectRaw('category, count(*) as total')
+            ->groupBy('category')
+            ->pluck('total', 'category');
+
+        $totalTickets = $categoryCounts->sum();
 
         return view('technician.dashboard', compact(
-            'tickets', 'openCount', 'resolvedThisMonth', 'avgResolutionHours'
+            'tickets', 'openCount', 'resolvedThisMonth',
+            'avgResolutionHours', 'avgResponseHours',
+            'categoryCounts', 'totalTickets'
         ));
     }
 }

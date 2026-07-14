@@ -9,23 +9,67 @@
         <div class="max-w-6xl mx-auto sm:px-6 lg:px-8">
 
             {{-- KPI cards --}}
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
-                <div class="bg-white border border-gray-200 rounded-lg p-5">
-                    <div class="text-xs font-bold text-gray-500 uppercase mb-2">Open tickets</div>
-                    <div class="text-3xl font-bold text-gray-800">{{ $openCount }}</div>
-                </div>
-                <div class="bg-white border border-gray-200 rounded-lg p-5">
-                    <div class="text-xs font-bold text-gray-500 uppercase mb-2">Resolved this month</div>
-                    <div class="text-3xl font-bold text-gray-800">{{ $resolvedThisMonth }}</div>
-                </div>
-                <div class="bg-white border border-gray-200 rounded-lg p-5">
-                    <div class="text-xs font-bold text-gray-500 uppercase mb-2">Avg. resolution time</div>
-                    <div class="text-3xl font-bold text-gray-800">
-                        {{ $avgResolutionHours ? number_format($avgResolutionHours, 1) . ' hrs' : '—' }}
+            <div class="grid grid-cols-1 sm:grid-cols-4 gap-4 mb-8">
+    <div class="bg-white border border-gray-200 rounded-lg p-5">
+        <div class="text-xs font-bold text-gray-500 uppercase mb-2">Open tickets</div>
+        <div class="text-3xl font-bold text-gray-800">{{ $openCount }}</div>
+    </div>
+    <div class="bg-white border border-gray-200 rounded-lg p-5">
+        <div class="text-xs font-bold text-gray-500 uppercase mb-2">Resolved this month</div>
+        <div class="text-3xl font-bold text-gray-800">{{ $resolvedThisMonth }}</div>
+    </div>
+    <div class="bg-white border border-gray-200 rounded-lg p-5">
+        <div class="text-xs font-bold text-gray-500 uppercase mb-2">Avg. response time</div>
+       <div class="text-3xl font-bold text-gray-800">
+    @if (is_null($avgResponseHours))
+        —
+    @elseif ($avgResponseHours < 1)
+        {{ round($avgResponseHours * 60) }} min
+    @else
+        {{ number_format($avgResponseHours, 1) }} hrs
+    @endif
+</div>
+    </div>
+    <div class="bg-white border border-gray-200 rounded-lg p-5">
+        <div class="text-xs font-bold text-gray-500 uppercase mb-2">Avg. resolution time</div>
+        <div class="text-3xl font-bold text-gray-800">
+    @if (is_null($avgResolutionHours))
+        —
+    @elseif ($avgResolutionHours < 1)
+        {{ round($avgResolutionHours * 60) }} min
+    @else
+        {{ number_format($avgResolutionHours, 1) }} hrs
+    @endif
+</div>
+    </div>
+</div>
+            </div>
+{{-- Category breakdown --}}
+<div class="bg-white border border-gray-200 rounded-lg mb-8 p-6">
+    <div class="font-bold text-gray-800 mb-4">Tickets by Category</div>
+
+    @if ($totalTickets === 0)
+        <div class="text-sm text-gray-500">No tickets submitted yet.</div>
+    @else
+        <div class="space-y-3">
+            @foreach (['Hardware', 'Software', 'Network', 'Printer', 'Internet', 'Others'] as $cat)
+                @php
+                    $count = $categoryCounts[$cat] ?? 0;
+                    $percent = $totalTickets > 0 ? round(($count / $totalTickets) * 100) : 0;
+                @endphp
+                <div>
+                    <div class="flex justify-between text-sm mb-1">
+                        <span class="font-semibold text-gray-700">{{ $cat }}</span>
+                        <span class="text-gray-500">{{ $count }} ({{ $percent }}%)</span>
+                    </div>
+                    <div class="w-full bg-gray-100 rounded-full h-2">
+                        <div class="bg-amber-500 h-2 rounded-full" style="width: {{ $percent }}%"></div>
                     </div>
                 </div>
-            </div>
-
+            @endforeach
+        </div>
+    @endif
+</div>
             {{-- All tickets --}}
             <div class="bg-white border border-gray-200 rounded-lg">
                 <div class="px-6 py-4 border-b border-gray-200 font-bold text-gray-800">

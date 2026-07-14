@@ -25,26 +25,31 @@ class TicketController extends Controller
     }
 
     // Handle the form submission
-    public function store(Request $request)
-    {
-        $validated = $request->validate([
-            'subject' => 'required|string|max:255',
-            'description' => 'required|string',
-            'category' => 'required|in:Hardware,Software,Network,Printer,Internet,Others',
-            'priority' => 'required|in:Low,Medium,High,Critical',
-        ]);
+   public function store(Request $request)
+{
+    $validated = $request->validate([
+        'subject' => 'required|string|max:255',
+        'description' => 'required|string',
+        'category' => 'required|in:Hardware,Software,Network,Printer,Internet,Others',
+        'priority' => 'required|in:Low,Medium,High,Critical',
+    ]);
 
-        $validated['submitted_by'] = auth()->id();
-        $validated['status'] = 'Open';
+    $validated['submitted_by'] = auth()->id();
+    $validated['status'] = 'Open';
 
-        Ticket::create($validated);
+    $ticket = Ticket::create($validated);
 
-        return redirect()->route('tickets.index')
-            ->with('success', 'Ticket submitted successfully.');
+    $technicians = \App\Models\User::where('role', 'technician')->get();
+    foreach ($technicians as $technician) {
+        $technician->notify(new \App\Notifications\NewTicketNotification($ticket));
     }
 
+    return redirect()->route('tickets.index')
+        ->with('success', 'Ticket submitted successfully.');
+}
+
     // Show a single ticket's details
-    public function show(Ticket $ticket)
+   public function show(Ticket $ticket)
 {
     $user = auth()->user();
 
@@ -55,16 +60,16 @@ class TicketController extends Controller
     $user->unreadNotifications
         ->where('data.ticket_id', $ticket->id)
         ->each->markAsRead();
-return view('tickets.show', compact('ticket'));
-}
 
+    return view('tickets.show', compact('ticket'));
+}
     public function edit(Ticket $ticket)
     {
         return view('tickets.edit', compact('ticket'));
     }
 
     // Update a ticket (status change, technician remarks, assignment)
-   public function update(Request $request, Ticket $ticket)
+  public function update(Request $request, Ticket $ticket)
 {
     $validated = $request->validate([
         'status' => 'required|in:Open,In Progress,Pending,Resolved,Closed',
@@ -76,6 +81,11 @@ return view('tickets.show', compact('ticket'));
 
     if ($justResolved) {
         $validated['resolved_at'] = now();
+    }
+
+    // Mark the very first time a technician touches this ticket
+    if (is_null($ticket->first_response_at)) {
+        $validated['first_response_at'] = now();
     }
 
     $ticket->update($validated);
