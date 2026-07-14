@@ -3,10 +3,17 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TechnicianController;
 use App\Http\Controllers\TicketController;
 use App\Http\Controllers\FaqController;
+use App\Http\Controllers\UserManagementController;
 use Illuminate\Support\Facades\Route;
 
     Route::get('/', function () {
-    return view('welcome');
+    if (auth()->check()) {
+        return auth()->user()->role === 'technician'
+            ? redirect()->route('technician.dashboard')
+            : redirect()->route('dashboard');
+    }
+
+    return redirect()->route('login');
 });
 
     Route::get('/dashboard', function () {
@@ -32,9 +39,16 @@ use Illuminate\Support\Facades\Route;
 
     // Technician-only routes
     Route::middleware('technician')->group(function () {
-        Route::get('/technician/dashboard', [TechnicianController::class, 'dashboard'])->name('technician.dashboard');
-        Route::get('/tickets/{ticket}/edit', [TicketController::class, 'edit'])->name('tickets.edit');
-        Route::put('/tickets/{ticket}', [TicketController::class, 'update'])->name('tickets.update');
+    Route::get('/technician/dashboard', [TechnicianController::class, 'dashboard'])->name('technician.dashboard');
+    Route::get('/tickets/{ticket}/edit', [TicketController::class, 'edit'])->name('tickets.edit');
+    Route::put('/tickets/{ticket}', [TicketController::class, 'update'])->name('tickets.update');
+
+    Route::get('/users', [UserManagementController::class, 'index'])->name('users.index');
+    Route::get('/users/create', [UserManagementController::class, 'create'])->name('users.create');
+    Route::post('/users', [UserManagementController::class, 'store'])->name('users.store');
+    Route::get('/users/{user}/edit', [UserManagementController::class, 'edit'])->name('users.edit');
+    Route::put('/users/{user}', [UserManagementController::class, 'update'])->name('users.update');
+    Route::delete('/users/{user}', [UserManagementController::class, 'destroy'])->name('users.destroy');
     });
 });
 

@@ -4,17 +4,26 @@
         <div class="flex justify-between h-16">
             <div class="flex">
                 <!-- Logo -->
-                <div class="shrink-0 flex items-center">
-                    <a href="{{ route('dashboard') }}">
-                        <x-application-logo class="block h-9 w-auto fill-current text-gray-800" />
-                    </a>
-                </div>
+             <div class="shrink-0 flex items-center gap-3">
+                <a href="{{ route('dashboard') }}" class="flex items-center gap-3">
+                     <img src="{{ asset('logo.svg') }}" alt="EM Power Beautiful Skin" class="h-11 w-auto">
+            <div class="text-left">
+            <div class="text-base font-bold text-gray-800 leading-tight">
+                <span class="text-pink-600">EM</span> Power Beautiful Skin
+            </div>
+            <div class="text-[10px] tracking-[0.2em] text-gray-500 font-semibold">CORPORATION</div>
+        </div>
+    </a>
+</div>
 
                 <!-- Navigation Links -->
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                   @if (auth()->user()->role === 'technician')
     <x-nav-link :href="route('technician.dashboard')" :active="request()->routeIs('technician.*')">
         Dashboard
+    </x-nav-link>
+    <x-nav-link :href="route('users.index')" :active="request()->routeIs('users.*')">
+        Users
     </x-nav-link>
 @else
     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">

@@ -5,7 +5,7 @@
                 My Tickets
             </h2>
             <a href="{{ route('tickets.create') }}"
-                class="bg-gray-900 text-white font-bold px-5 py-2.5 rounded-md hover:bg-gray-700 text-sm">
+                class="bg-pink-700 text-white font-bold px-5 py-2.5 rounded-md hover:bg-gray-700 text-sm">
                 + New ticket
             </a>
         </div>
@@ -31,7 +31,7 @@
                 <div class="space-y-3">
                     @foreach ($tickets as $ticket)
                         <a href="{{ route('tickets.show', $ticket) }}"
-                            class="block bg-white border border-gray-200 rounded-lg p-5 hover:border-amber-500 hover:shadow-sm transition">
+                            class="block bg-[#faf5f2] border border-gray-400 rounded-lg p-5 hover:border-pink-500 hover:shadow-lg transition">
                             <div class="flex items-center gap-5">
 
                                 <div class="text-xs text-gray-400 w-16 flex-shrink-0">

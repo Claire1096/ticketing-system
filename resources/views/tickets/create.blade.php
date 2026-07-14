@@ -66,13 +66,7 @@
     <p class="text-sm text-gray-500 mt-2">Critical: production line or point-of-sale is down. Choose this only if work has stopped.</p>
 </div>
 
-                    {{-- Subject --}}
-                    <div>
-                        <label for="subject" class="block text-sm font-bold text-gray-800 mb-2">Subject</label>
-                        <input type="text" name="subject" id="subject" value="{{ old('subject') }}"
-                            placeholder="e.g. Label printer misaligning on batch runs"
-                            class="w-full border-gray-300 rounded-md shadow-sm focus:border-amber-500 focus:ring-amber-500" required>
-                    </div>
+                 
 
                     {{-- Description --}}
                     <div>

@@ -8,7 +8,7 @@
     <div class="py-8">
         <div class="max-w-6xl mx-auto sm:px-6 lg:px-8">
 
-            <div class="bg-gray-400 rounded-2xl p-10 flex items-center justify-between gap-8 overflow-hidden relative">
+            <div class="bg-pink-200 rounded-2xl p-10 flex items-center justify-between gap-8 overflow-hidden relative">
 
                 <div class="max-w-lg relative z-10">
                     <h1 class="text-3xl font-bold text-gray-700 mb-4">
