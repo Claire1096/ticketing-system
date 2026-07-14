@@ -28,12 +28,12 @@ class TicketController extends Controller
    public function store(Request $request)
 {
     $validated = $request->validate([
-        'subject' => 'required|string|max:255',
         'description' => 'required|string',
         'category' => 'required|in:Hardware,Software,Network,Printer,Internet,Others',
         'priority' => 'required|in:Low,Medium,High,Critical',
     ]);
 
+    $validated['subject'] = \Illuminate\Support\Str::limit($validated['description'], 60);
     $validated['submitted_by'] = auth()->id();
     $validated['status'] = 'Open';
 

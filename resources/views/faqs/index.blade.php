@@ -19,7 +19,7 @@
                 @endif
                 <input type="text" name="search" value="{{ $search }}"
                     placeholder="Search articles, e.g. &quot;printer offline&quot;"
-                    class="w-full max-w-md border-gray-300 rounded-md shadow-sm text-sm">
+                    class="w-full max-w-md border-pink-900 rounded-md shadow-sm text-sm">
             </form>
 
             {{-- Category filter chips --}}
@@ -38,11 +38,11 @@
 
             {{-- FAQ list --}}
             @if ($faqs->isEmpty())
-                <div class="bg-white border border-gray-200 rounded-lg p-10 text-center text-gray-500">
+                <div class="bg-pink-100 border border-pink-200 rounded-lg p-10 text-center text-pink-500">
                     No articles found{{ $search ? ' for "' . $search . '"' : '' }}.
                 </div>
             @else
-                <div class="bg-white border border-gray-200 rounded-lg divide-y divide-gray-100">
+                <div class="bg-pink-100 border border-pink-200 rounded-lg divide-y divide-pink-900">
                     @foreach ($faqs as $faq)
                         <div x-data="{ open: false }" class="px-6">
                             <button @click="open = !open" class="w-full flex justify-between items-center gap-4 py-5 text-left">

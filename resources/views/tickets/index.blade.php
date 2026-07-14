@@ -63,7 +63,7 @@
                                         'Open' => 'bg-blue-500',
                                         'In Progress' => 'bg-amber-500',
                                         'Pending' => 'bg-orange-400',
-                                        'Resolved' => 'bg-green-500',
+                                        'Resolved' => 'bg-green-400',
                                         'Closed' => 'bg-gray-400',
                                     ];
                                 @endphp
