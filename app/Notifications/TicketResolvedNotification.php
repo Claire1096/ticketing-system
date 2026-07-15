@@ -26,7 +26,7 @@ class TicketResolvedNotification extends Notification
             ->subject('Your ticket #' . str_pad($this->ticket->id, 4, '0', STR_PAD_LEFT) . ' has been resolved')
             ->greeting('Hi ' . $notifiable->name . ',')
             ->line('Your IT support ticket has been marked as resolved.')
-            ->line('Subject: ' . $this->ticket->subject)
+            ->line('Description: ' . \Illuminate\Support\Str::limit($this->ticket->description, 100))
             ->line('Technician remarks: ' . ($this->ticket->technician_remarks ?: 'None provided.'))
             ->action('View Ticket', route('tickets.show', $this->ticket))
             ->line('If this issue isn\'t actually fixed, feel free to reply or submit a new ticket.')
@@ -34,11 +34,10 @@ class TicketResolvedNotification extends Notification
     }
 
     public function toArray(object $notifiable): array
-    {
-        return [
-            'ticket_id' => $this->ticket->id,
-            'subject' => $this->ticket->subject,
-            'message' => 'Your ticket "' . $this->ticket->subject . '" has been resolved.',
-        ];
-    }
+{
+    return [
+        'ticket_id' => $this->ticket->id,
+        'message' => 'Your ticket "' . \Illuminate\Support\Str::limit($this->ticket->description, 40) . '" has been resolved.',
+    ];
+}
 }

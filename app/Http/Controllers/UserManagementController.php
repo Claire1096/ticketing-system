@@ -22,12 +22,12 @@ class UserManagementController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email',
-            'password' => 'required|string|min:8',
-            'role' => 'required|in:employee,technician',
-        ]);
-
+    'name' => 'required|string|max:255',
+    'email' => 'required|email|unique:users,email',
+    'password' => 'required|string|min:8',
+    'role' => 'required|in:employee,technician',
+    'department' => 'required|in:Sales and Marketing,Logistics,Human Resource,Finance and Accounting,IT Dept,Production,Executives',
+]);
         $validated['password'] = bcrypt($validated['password']);
 
         User::create($validated);
@@ -42,12 +42,13 @@ public function edit(User $user)
 
 public function update(Request $request, User $user)
 {
-    $validated = $request->validate([
-        'name' => 'required|string|max:255',
-        'email' => 'required|email|unique:users,email,' . $user->id,
-        'role' => 'required|in:employee,technician',
-        'password' => 'nullable|string|min:8',
-    ]);
+  $validated = $request->validate([
+    'name' => 'required|string|max:255',
+    'email' => 'required|email|unique:users,email,' . $user->id,
+    'role' => 'required|in:employee,technician',
+    'department' => 'required|in:Sales and Marketing,Logistics,Human Resource,Finance and Accounting,IT Dept,Production,Executives',
+    'password' => 'nullable|string|min:8',
+]);
 
     if (!empty($validated['password'])) {
         $validated['password'] = bcrypt($validated['password']);

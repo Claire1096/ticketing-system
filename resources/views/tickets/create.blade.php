@@ -28,7 +28,7 @@
                         <label class="block text-sm font-bold text-gray-800 mb-3">Category</label>
                         <div class="grid grid-cols-3 gap-3">
                             @foreach (['Hardware' => '🖥️', 'Software' => '🧩', 'Network' => '📶', 'Printer' => '🖨️', 'Internet' => '🌐', 'Others' => '⋯'] as $cat => $icon)
-                            <label class="flex flex-col items-center gap-2 border-2 rounded-lg p-4 cursor-pointer hover:border-gray-400 has-[:checked]:border-amber-600 has-[:checked]:bg-amber-50">
+                            <label class="flex flex-col items-center gap-2 border-2 rounded-lg p-4 cursor-pointer hover:border-gray-400 has-[:checked]:border-pink-600 has-[:checked]:bg-pink-50">
                                 <input type="radio" name="category" value="{{ $cat }}" class="hidden"
                                     {{ old('category') === $cat ? 'checked' : '' }} required>
                                 <span class="text-xl">{{ $icon }}</span>
@@ -65,7 +65,20 @@
     </div>
     <p class="text-sm text-gray-500 mt-2">Critical: production line or point-of-sale is down. Choose this only if work has stopped.</p>
 </div>
-
+{{-- Department --}}
+<div>
+    <label for="department" class="block text-sm font-bold text-gray-800 mb-2">Department</label>
+    <select name="department" id="department" class="w-full border-gray-300 rounded-md shadow-sm focus:border-pink-200 focus:ring-pink-500" required>
+        <option value="">Select your department</option>
+        <option value="Sales and Marketing" {{ old('department') === 'Sales and Marketing' ? 'selected' : '' }}>Sales and Marketing</option>
+        <option value="Logistics" {{ old('department') === 'Logistics' ? 'selected' : '' }}>Logistics</option>
+        <option value="Human Resource" {{ old('department') === 'Human Resource' ? 'selected' : '' }}>Human Resource</option>
+        <option value="Finance and Accounting" {{ old('department') === 'Finance and Accounting' ? 'selected' : '' }}>Finance and Accounting</option>
+        <option value="IT Dept" {{ old('department') === 'IT Dept' ? 'selected' : '' }}>IT Dept</option>
+        <option value="Production" {{ old('department') === 'Production' ? 'selected' : '' }}>Production</option>
+        <option value="Executives" {{ old('department') === 'Executives' ? 'selected' : '' }}>Executives</option>
+    </select>
+</div>
                  
 
                     {{-- Description --}}
@@ -73,17 +86,17 @@
                         <label for="description" class="block text-sm font-bold text-gray-800 mb-2">Description</label>
                         <textarea name="description" id="description" rows="5"
                             placeholder="What happened, when it started, and what you've already tried."
-                            class="w-full border-gray-300 rounded-md shadow-sm focus:border-amber-500 focus:ring-amber-500" required>{{ old('description') }}</textarea>
+                            class="w-full border-gray-300 rounded-md shadow-sm focus:border-pink-500 focus:ring-pink-700" required>{{ old('description') }}</textarea>
                     </div>
 
                     {{-- Actions --}}
                     <div class="flex gap-3">
                         <button type="submit"
-                            class="bg-gray-900 text-white font-bold px-6 py-3 rounded-md hover:bg-gray-700">
+                            class="bg-pink-700 text-white font-bold px-6 py-3 rounded-md hover:bg-gray-700">
                             Submit ticket
                         </button>
                         <a href="{{ route('tickets.index') }}"
-                            class="border-2 border-gray-300 text-gray-600 font-bold px-6 py-3 rounded-md hover:border-gray-400">
+                            class="border-2 border-gray-300 text-gray-600 font-bold px-6 py-3 rounded-md hover:border-pink-700">
                             Cancel
                         </a>
                     </div>

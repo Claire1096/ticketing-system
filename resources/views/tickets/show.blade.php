@@ -40,11 +40,14 @@
                 {{-- Top row: subject + status seal --}}
                 <div class="flex justify-between items-start mb-6">
                     <div>
-                        <h3 class="text-xl font-bold text-gray-800 mb-2">{{ $ticket->subject }}</h3>
+                        <h3 class="text-xl font-bold text-gray-800 mb-2">{{ Str::limit($ticket->description, 80) }}</h3>
                         <div class="flex gap-2">
                             <span class="text-xs font-bold px-2.5 py-1 rounded-full bg-gray-100 text-gray-600">
                                 {{ $ticket->category }}
                             </span>
+                             <span class="text-xs font-bold px-2.5 py-1 rounded-full bg-blue-50 text-blue-600">
+        {{ $ticket->department }}
+    </span>
                             @php
                                 $priorityColors = [
                                     'Low' => 'bg-green-100 text-green-700',

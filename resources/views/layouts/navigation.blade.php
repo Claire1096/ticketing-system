@@ -2,45 +2,52 @@
     <!-- Primary Navigation Menu -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-16">
-            <div class="flex">
+            
+            <!-- Logo & Nav Links Container (Takes up the left/center space) -->
+            <div class="flex flex-1 justify-between sm:justify-start">
                 <!-- Logo -->
-             <div class="shrink-0 flex items-center gap-3">
-                <a href="{{ route('dashboard') }}" class="flex items-center gap-3">
-                     <img src="{{ asset('logo.svg') }}" alt="EM Power Beautiful Skin" class="h-11 w-auto">
-            <div class="text-left">
-            <div class="text-base font-bold text-gray-800 leading-tight">
-                <span class="text-pink-600">EM</span> Power Beautiful Skin
-            </div>
-            <div class="text-[10px] tracking-[0.2em] text-gray-500 font-semibold">CORPORATION</div>
-        </div>
-    </a>
-</div>
+                <div class="shrink-0 flex items-center gap-3">
+                    <a href="{{ route('dashboard') }}" class="flex items-center gap-3">
+                        <img src="{{ asset('logo.svg') }}" alt="EM Power Beautiful Skin" class="h-11 w-auto">
+                        <div class="text-left">
+                            <div class="text-base font-bold text-gray-800 leading-tight">
+                                <span class="text-pink-600">EM</span> Power Beautiful Skin
+                            </div>
+                            <div class="text-[10px] tracking-[0.2em] text-gray-500 font-semibold">CORPORATION</div>
+                        </div>
+                    </a>
+                </div>
 
-                <!-- Navigation Links -->
-                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                  @if (auth()->user()->role === 'technician')
-    <x-nav-link :href="route('technician.dashboard')" :active="request()->routeIs('technician.*')">
-        Dashboard
-    </x-nav-link>
-    <x-nav-link :href="route('users.index')" :active="request()->routeIs('users.*')">
-        Users
-    </x-nav-link>
-@else
-    <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-        {{ __('Dashboard') }}
-    </x-nav-link>
-@endif
-
-<x-nav-link :href="route('tickets.index')" :active="request()->routeIs('tickets.index') || request()->routeIs('tickets.show')">
-    My Tickets
-</x-nav-link>
-                    <x-nav-link :href="route('faqs.index')" :active="request()->routeIs('faqs.*')">
-                        Knowledge Base
-                    </x-nav-link>
+                <!-- Navigation Links (With me-auto to push everything after it to the right) -->
+                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex sm:flex-1">
+                    @if (auth()->user()->role === 'technician')
+                        <x-nav-link :href="route('technician.dashboard')" :active="request()->routeIs('technician.dashboard')">
+                            Dashboard
+                        </x-nav-link>
+                        <x-nav-link :href="route('tickets.all')" :active="request()->routeIs('tickets.all')">
+                            All Tickets
+                        </x-nav-link>
+                        <x-nav-link :href="route('users.index')" :active="request()->routeIs('users.*')">
+                            Users
+                        </x-nav-link>
+                        <x-nav-link :href="route('faqs.index')" :active="request()->routeIs('faqs.*')">
+                            Knowledge Base
+                        </x-nav-link>
+                    @else
+                        <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
+                            {{ __('Dashboard') }}
+                        </x-nav-link>
+                        <x-nav-link :href="route('tickets.index')" :active="request()->routeIs('tickets.index') || request()->routeIs('tickets.show')">
+                            My Tickets
+                        </x-nav-link>
+                        <x-nav-link :href="route('faqs.index')" :active="request()->routeIs('faqs.*')">
+                            Knowledge Base
+                        </x-nav-link>
+                    @endif
                 </div>
             </div>
 
-            <!-- Settings Dropdown -->
+            <!-- Settings Dropdown (Pushed completely to the right edge) -->
             <div class="hidden sm:flex sm:items-center sm:ms-6 gap-3">
 
                 <div class="relative">

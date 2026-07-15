@@ -51,7 +51,23 @@
                             <option value="technician" {{ $user->role === 'technician' ? 'selected' : '' }}>Technician</option>
                         </select>
                     </div>
+<div>
+    <label class="block text-sm font-bold text-gray-700 mb-2">Role</label>
+    <select name="role" class="w-full border-gray-300 rounded-md shadow-sm" required>
+        <option value="employee" {{ $user->role === 'employee' ? 'selected' : '' }}>Employee</option>
+        <option value="technician" {{ $user->role === 'technician' ? 'selected' : '' }}>Technician</option>
+    </select>
+</div>
 
+<div>
+    <label class="block text-sm font-bold text-gray-700 mb-2">Department</label>
+    <select name="department" class="w-full border-gray-300 rounded-md shadow-sm" required>
+        <option value="">Select department</option>
+        @foreach (['Sales and Marketing', 'Logistics', 'Human Resource', 'Finance and Accounting', 'IT Dept', 'Production', 'Executives'] as $dept)
+            <option value="{{ $dept }}" {{ $user->department === $dept ? 'selected' : '' }}>{{ $dept }}</option>
+        @endforeach
+    </select>
+</div>
                     <div class="flex gap-3 pt-2">
                         <button type="submit"
                             class="bg-gray-900 text-white font-bold px-6 py-3 rounded-md hover:bg-gray-700">

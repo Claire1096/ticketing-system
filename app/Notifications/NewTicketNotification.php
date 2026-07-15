@@ -21,12 +21,11 @@ class NewTicketNotification extends Notification
     }
 
     public function toArray(object $notifiable): array
-    {
-        return [
-            'ticket_id' => $this->ticket->id,
-            'subject' => $this->ticket->subject,
-            'priority' => $this->ticket->priority,
-            'message' => $this->ticket->submittedBy->name . ' submitted a new ' . $this->ticket->priority . ' priority ticket: "' . $this->ticket->subject . '"',
-        ];
-    }
+{
+    return [
+        'ticket_id' => $this->ticket->id,
+        'priority' => $this->ticket->priority,
+        'message' => $this->ticket->submittedBy->name . ' submitted a new ' . $this->ticket->priority . ' priority ticket: "' . \Illuminate\Support\Str::limit($this->ticket->description, 40) . '"',
+    ];
+}
 }

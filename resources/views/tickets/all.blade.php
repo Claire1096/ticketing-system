@@ -1,37 +1,22 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex justify-between items-center">
-            <h2 class="font-semibold text-lg text-pink-700 leading-tight">
-                My Tickets
-            </h2>
-            <a href="{{ route('tickets.create') }}"
-                class="bg-pink-700 text-white font-bold px-5 py-2.5 rounded-md hover:bg-gray-700 text-sm">
-                + New ticket
-            </a>
-        </div>
+        <h2 class="font-semibold text-xl text-pink-700 leading-tight">
+            All Tickets
+        </h2>
     </x-slot>
 
     <div class="py-8">
         <div class="max-w-5xl mx-auto sm:px-6 lg:px-8">
 
-            @if (session('success'))
-                <div class="mb-6 bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded">
-                    {{ session('success') }}
-                </div>
-            @endif
-
             @if ($tickets->isEmpty())
-                <div class="bg-white shadow-sm sm:rounded-lg p-10 text-center text-gray-500">
-                    You haven't submitted any tickets yet.
-                    <a href="{{ route('tickets.create') }}" class="text-amber-700 font-semibold underline">
-                        Submit your first one
-                    </a>
+                <div class="bg-white border border-gray-200 rounded-lg p-10 text-center text-gray-500">
+                    No tickets have been submitted yet.
                 </div>
             @else
                 <div class="space-y-3">
                     @foreach ($tickets as $ticket)
                         <a href="{{ route('tickets.show', $ticket) }}"
-                            class="block bg-pink-50 border border-gray-400 rounded-lg p-5 hover:border-pink-500 hover:shadow-lg transition">
+                            class="block bg-white border border-gray-200 rounded-lg p-5 hover:border-pink-400 hover:shadow-sm transition">
                             <div class="flex items-center gap-5">
 
                                 <div class="text-xs text-gray-400 w-16 flex-shrink-0">
@@ -40,16 +25,18 @@
 
                                 <div class="flex-1 min-w-0">
                                     <div class="font-bold text-gray-800 mb-1">{{ Str::limit($ticket->description, 60) }}</div>
+                                    <div class="text-xs text-gray-500 mb-1">
+                                        Submitted by {{ $ticket->submittedBy->name }}
+                                    </div>
                                     <div class="flex gap-2">
                                         <span class="text-xs font-bold px-2.5 py-1 rounded-full bg-gray-100 text-gray-600">
                                             {{ $ticket->category }}
                                         </span>
-                                         @if ($ticket->department)
-    <span class="text-xs font-bold px-2.5 py-1 rounded-full bg-blue-50 text-blue-600">
-        {{ $ticket->department }}
-    </span>
-@endif
-    </span>
+                                        @if ($ticket->department)
+                                            <span class="text-xs font-bold px-2.5 py-1 rounded-full bg-blue-50 text-blue-600">
+                                                {{ $ticket->department }}
+                                            </span>
+                                        @endif
                                         @php
                                             $priorityColors = [
                                                 'Low' => 'bg-green-100 text-green-700',
@@ -69,7 +56,7 @@
                                         'Open' => 'bg-blue-500',
                                         'In Progress' => 'bg-amber-500',
                                         'Pending' => 'bg-orange-400',
-                                        'Resolved' => 'bg-green-400',
+                                        'Resolved' => 'bg-green-500',
                                         'Closed' => 'bg-gray-400',
                                     ];
                                 @endphp

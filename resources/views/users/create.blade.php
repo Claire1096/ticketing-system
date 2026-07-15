@@ -45,10 +45,24 @@
                         <label class="block text-sm font-bold text-gray-700 mb-2">Role</label>
                         <select name="role" class="w-full border-gray-300 rounded-md shadow-sm" required>
                             <option value="employee">Employee</option>
-                            <option value="technician">Technician</option>
+                            <option value="technician">Admin</option>
                         </select>
                     </div>
 
+
+<div>
+    <label class="block text-sm font-bold text-gray-700 mb-2">Department</label>
+    <select name="department" class="w-full border-gray-300 rounded-md shadow-sm" required>
+        <option value="">Select department</option>
+        <option value="Sales and Marketing">Sales and Marketing</option>
+        <option value="Logistics">Logistics</option>
+        <option value="Human Resource">Human Resource</option>
+        <option value="Finance and Accounting">Finance and Accounting</option>
+        <option value="IT Dept">IT Dept</option>
+        <option value="Production">Production</option>
+        <option value="Executives">Executives</option>
+    </select>
+</div>
                     <div class="flex gap-3 pt-2">
                         <button type="submit"
                             class="bg-gray-900 text-white font-bold px-6 py-3 rounded-md hover:bg-gray-700">

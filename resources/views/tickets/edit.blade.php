@@ -11,7 +11,7 @@
             <div class="bg-white shadow-sm sm:rounded-lg p-8">
 
                 <div class="mb-6">
-                    <div class="font-bold text-gray-800 text-lg mb-1">{{ $ticket->subject }}</div>
+                    <div class="font-bold text-gray-800 text-lg mb-1">{{ Str::limit($ticket->description, 80) }}</div>
                     <p class="text-gray-600 text-sm">{{ $ticket->description }}</p>
                 </div>
 

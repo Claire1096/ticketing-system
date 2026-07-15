@@ -10,17 +10,17 @@ class Ticket extends Model
     use HasFactory;
 
     protected $fillable = [
-        'subject',
-        'description',
-        'category',
-        'priority',
-        'status',
-        'submitted_by',
-        'assigned_to',
-        'technician_remarks',
-        'resolved_at',
-        'first_response_at',
-    ];
+    'description',
+    'department',
+    'category',
+    'priority',
+    'status',
+    'submitted_by',
+    'assigned_to',
+    'technician_remarks',
+    'resolved_at',
+    'first_response_at',
+];
 
     protected $casts = [
     'resolved_at' => 'datetime',

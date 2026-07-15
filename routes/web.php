@@ -5,6 +5,8 @@ use App\Http\Controllers\TicketController;
 use App\Http\Controllers\FaqController;
 use App\Http\Controllers\UserManagementController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Password;
 
     Route::get('/', function () {
     if (auth()->check()) {
@@ -40,16 +42,16 @@ use Illuminate\Support\Facades\Route;
     // Technician-only routes
     Route::middleware('technician')->group(function () {
     Route::get('/technician/dashboard', [TechnicianController::class, 'dashboard'])->name('technician.dashboard');
+    Route::get('/all-tickets', [TechnicianController::class, 'allTickets'])->name('tickets.all');
     Route::get('/tickets/{ticket}/edit', [TicketController::class, 'edit'])->name('tickets.edit');
     Route::put('/tickets/{ticket}', [TicketController::class, 'update'])->name('tickets.update');
-
     Route::get('/users', [UserManagementController::class, 'index'])->name('users.index');
     Route::get('/users/create', [UserManagementController::class, 'create'])->name('users.create');
     Route::post('/users', [UserManagementController::class, 'store'])->name('users.store');
     Route::get('/users/{user}/edit', [UserManagementController::class, 'edit'])->name('users.edit');
     Route::put('/users/{user}', [UserManagementController::class, 'update'])->name('users.update');
     Route::delete('/users/{user}', [UserManagementController::class, 'destroy'])->name('users.destroy');
-    });
+});
 });
 
 Route::middleware('auth')->group(function () {
@@ -57,5 +59,26 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
+
+Route::get('/my-metrics', [DashboardController::class, 'myMetrics'])
+    ->middleware(['auth'])
+    ->name('tech.metrics');
+    
+Route::get('/forgot-password', function () {
+    return view('auth.forgot-password');
+})->middleware('guest')->name('password.request');
+
+// 2. Handle the form submission and send the email
+Route::post('/forgot-password', function (Request $request) {
+    $request->validate(['email' => 'required|email']);
+
+    $status = Password::sendResetLink(
+        $request->only('email')
+    );
+
+    return $status === Password::ResetLinkSent
+        ? back()->with('status', __($status))
+        : back()->withErrors(['email' => __($status)]);
+})->middleware('guest')->name('password.email');
 
 require __DIR__ . '/auth.php';
