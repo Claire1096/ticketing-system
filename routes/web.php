@@ -7,6 +7,13 @@ use App\Http\Controllers\UserManagementController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Password;
+use App\Http\Controllers\FeedbackController;
+
+
+use App\Models\Ticket;
+
+
+
 
     Route::get('/', function () {
     if (auth()->check()) {
@@ -17,6 +24,17 @@ use Illuminate\Support\Facades\Password;
 
     return redirect()->route('login');
 });
+Route::get('/api/tickets/monthly/stats/{year}/{month}', function ($year, $month) {
+    $total = App\Models\Ticket::whereYear('created_at', $year)
+        ->whereMonth('created_at', $month)->count();
+        
+    $resolved = App\Models\Ticket::where('status', 'Resolved')
+        ->whereYear('resolved_at', $year)
+        ->whereMonth('resolved_at', $month)->count();
+
+    return response()->json(['total' => $total, 'resolved' => $resolved]);
+});
+   
 
     Route::get('/dashboard', function () {
     $user = auth()->user();
@@ -38,7 +56,10 @@ use Illuminate\Support\Facades\Password;
     Route::get('/tickets/{ticket}', [TicketController::class, 'show'])->name('tickets.show');
     Route::delete('/tickets/{ticket}', [TicketController::class, 'destroy'])->name('tickets.destroy');
     Route::get('/knowledge-base', [FaqController::class, 'index'])->name('faqs.index');
-
+    Route::get('/feedback', [FeedbackController::class, 'create'])->name('feedback.create');
+Route::post('/feedback', [FeedbackController::class, 'store'])->name('feedback.store');
+Route::get('/feedback', [FeedbackController::class, 'create'])->name('feedback.create');
+Route::get('/users', [UserController::class, 'index'])->name('users.index');
     // Technician-only routes
     Route::middleware('technician')->group(function () {
     Route::get('/technician/dashboard', [TechnicianController::class, 'dashboard'])->name('technician.dashboard');
@@ -51,6 +72,10 @@ use Illuminate\Support\Facades\Password;
     Route::get('/users/{user}/edit', [UserManagementController::class, 'edit'])->name('users.edit');
     Route::put('/users/{user}', [UserManagementController::class, 'update'])->name('users.update');
     Route::delete('/users/{user}', [UserManagementController::class, 'destroy'])->name('users.destroy');
+    Route::get('/knowledge-base/create', [FaqController::class, 'create'])->name('faqs.create');
+    Route::post('/knowledge-base', [FaqController::class, 'store'])->name('faqs.store');
+    Route::get('/technician/kpi-report', [TechnicianController::class, 'exportKpiReport'])->name('technician.kpi-report');
+    Route::get('/feedback/all', [FeedbackController::class, 'index'])->name('feedback.index');
 });
 });
 
@@ -60,10 +85,8 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-Route::get('/my-metrics', [DashboardController::class, 'myMetrics'])
-    ->middleware(['auth'])
-    ->name('tech.metrics');
-    
+
+
 Route::get('/forgot-password', function () {
     return view('auth.forgot-password');
 })->middleware('guest')->name('password.request');
@@ -71,6 +94,14 @@ Route::get('/forgot-password', function () {
 // 2. Handle the form submission and send the email
 Route::post('/forgot-password', function (Request $request) {
     $request->validate(['email' => 'required|email']);
+
+    $user = \App\Models\User::where('email', $request->email)->first();
+
+    if (!$user || $user->role !== 'technician') {
+        return back()->withErrors([
+            'email' => 'This isn\'t a registered IT Support account. Employees should contact IT Support directly to reset their password.',
+        ]);
+    }
 
     $status = Password::sendResetLink(
         $request->only('email')
@@ -80,5 +111,4 @@ Route::post('/forgot-password', function (Request $request) {
         ? back()->with('status', __($status))
         : back()->withErrors(['email' => __($status)]);
 })->middleware('guest')->name('password.email');
-
 require __DIR__ . '/auth.php';

@@ -21,16 +21,28 @@
                     @csrf
                     @method('PUT')
 
-                    <div>
-                        <label class="block text-sm font-bold text-gray-800 mb-2">Status</label>
-                        <select name="status" class="w-full border-gray-300 rounded-md shadow-sm">
-                            @foreach (['Open', 'In Progress', 'Pending', 'Resolved', 'Closed'] as $status)
-                                <option value="{{ $status }}" {{ $ticket->status === $status ? 'selected' : '' }}>
-                                    {{ $status }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
+                  <select name="status" class="w-full border-gray-300 rounded-md shadow-sm">
+    {{-- If Open, only show In Progress --}}
+    @if ($ticket->status === 'Open')
+        <option value="Open" selected>Open</option>
+        <option value="In Progress">In Progress</option>
+
+    {{-- If In Progress, only show Resolved --}}
+    @elseif ($ticket->status === 'In Progress')
+        <option value="In Progress" selected>In Progress</option>
+        <option value="Resolved">Resolved</option>
+
+    {{-- If Pending, allow moving to In Progress or Resolved --}}
+    @elseif ($ticket->status === 'Pending')
+        <option value="Pending" selected>Pending</option>
+        <option value="In Progress">In Progress</option>
+        <option value="Resolved">Resolved</option>
+
+    {{-- Default for others (Resolved, Closed) --}}
+    @else
+        <option value="{{ $ticket->status }}" selected>{{ $ticket->status }}</option>
+    @endif
+</select>
 
                     <div>
                         <label class="block text-sm font-bold text-gray-800 mb-2">Assign to</label>

@@ -1,11 +1,20 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-lg text-pink-700 leading-tight">
-            Knowledge Base
-        </h2>
+        <div class="flex justify-between items-center">
+            <h2 class="font-semibold text-xl text-pink-700 leading-tight">
+                Knowledge Base
+            </h2>
+            @if (auth()->user()->role === 'technician')
+                <a href="{{ route('faqs.create') }}"
+                    class="bg-pink-700 hover:bg-pink-800 text-white font-bold px-5 py-2.5 rounded-md text-sm">
+                    + Add Article
+                </a>
+            @endif
+        </div>
     </x-slot>
 
     <div class="py-8">
+        ...
         <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
 
             <p class="text-gray-600 text-sm mb-6">

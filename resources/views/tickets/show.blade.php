@@ -118,7 +118,58 @@
                         </p>
                     </div>
                 @endif
+@if ($ticket->status === 'Resolved' && $ticket->submitted_by === auth()->id())
+    @php
+        $existingFeedback = \App\Models\Feedback::where('ticket_id', $ticket->id)
+            ->where('submitted_by', auth()->id())
+            ->first();
+    @endphp
 
+    <hr class="my-6 border-gray-200">
+
+    @if ($existingFeedback)
+        <div class="bg-green-50 border border-green-200 rounded-lg p-5">
+            <div class="text-sm font-bold text-green-800 mb-2">Thanks for your feedback!</div>
+            @if ($existingFeedback->rating)
+                <div class="text-amber-400 text-lg mb-2">
+                    {{ str_repeat('★', $existingFeedback->rating) }}{{ str_repeat('☆', 5 - $existingFeedback->rating) }}
+                </div>
+            @endif
+            <p class="text-sm text-gray-700">{{ $existingFeedback->message }}</p>
+        </div>
+    @else
+        <div class="bg-pink-50 border border-pink-100 rounded-lg p-5">
+            <div class="text-sm font-bold text-gray-800 mb-3">How was this resolved for you?</div>
+
+            <form method="POST" action="{{ route('feedback.store') }}" class="space-y-4">
+                @csrf
+                <input type="hidden" name="ticket_id" value="{{ $ticket->id }}">
+
+                <div x-data="{ rating: 0 }">
+                    <input type="hidden" name="rating" x-model="rating">
+                    <div class="flex gap-1">
+                        <template x-for="star in [1,2,3,4,5]" :key="star">
+                            <button type="button" @click="rating = star"
+                                class="text-2xl"
+                                :class="star <= rating ? 'text-amber-400' : 'text-gray-300'">
+                                ★
+                            </button>
+                        </template>
+                    </div>
+                </div>
+
+                <textarea name="message" rows="3"
+                    placeholder="Any comments about how this was handled? (optional)"
+                    class="w-full border-gray-300 rounded-md shadow-sm text-sm"></textarea>
+
+                <button type="submit"
+                    class="bg-pink-700 hover:bg-pink-800 text-white font-bold px-5 py-2.5 rounded-md text-sm">
+                    Submit feedback
+                </button>
+            </form>
+        </div>
+    @endif
+@endif
             </div>
         </div>
     </div>

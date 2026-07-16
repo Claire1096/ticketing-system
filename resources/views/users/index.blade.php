@@ -10,7 +10,32 @@
             </a>
         </div>
     </x-slot>
+<!-- Department Filter Bar -->
+<!-- Department Filter Bar (Moved to the Far Right) -->
+<div class="bg-white p-4 rounded-lg shadow mb-6 flex justify-end items-center">
+    <form action="{{ route('users.index') }}" method="GET" class="flex items-center gap-3">
+        <label for="department" class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Department:</label>
+        
+        <select name="department" id="department" onchange="this.form.submit()" class="text-sm rounded-md border-gray-300 shadow-sm focus:border-pink-500 focus:ring-pink-500">
+            <option value="">All Departments</option>
+            <option value="Sales and Marketing" {{ request('department') == 'Sales and Marketing' ? 'selected' : '' }}>Sales and Marketing</option>
+            <option value="Logistics" {{ request('department') == 'Logistics' ? 'selected' : '' }}>Logistics</option>
+            <option value="Human Resource" {{ request('department') == 'Human Resource' ? 'selected' : '' }}>Human Resource</option>
+            <option value="Finance and Accounting" {{ request('department') == 'Finance and Accounting' ? 'selected' : '' }}>Finance and Accounting</option>
+            <option value="IT Dept" {{ request('department') == 'IT Dept' ? 'selected' : '' }}>IT Dept</option>
+            <option value="Production" {{ request('department') == 'Production' ? 'selected' : '' }}>Production</option>
+            <option value="Executives" {{ request('department') == 'Executives' ? 'selected' : '' }}>Executives</option>
+        </select>
 
+        @if(request()->filled('department'))
+            <a href="{{ route('users.index') }}" class="text-xs text-pink-600 hover:text-pink-700 underline font-medium ml-1">
+                Clear Filter
+            </a>
+        @endif
+    </form>
+
+    <!-- Right: Preserve your Add User button here if it's in the same container -->
+</div>
     <div class="py-8">
         <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
 
@@ -35,7 +60,7 @@
                             <div class="flex items-center gap-3">
                                 <span class="text-xs font-bold px-2.5 py-1 rounded-full"
                                     style="background: {{ $user->role === 'technician' ? '#F5E9F7' : '#F3F4F6' }}; color: {{ $user->role === 'technician' ? '#C026A3' : '#4B5563' }};">
-                                    {{ ucfirst($user->role) }}
+                                    {{ $user->role === 'technician' ? 'IT Support' : 'Employee' }}
                                 </span>
                                 <span class="text-xs font-bold px-2.5 py-1 rounded-full" style="background:#EEF2FF; color:#4F46E5;">
                                     {{ $user->department ?? '—' }}

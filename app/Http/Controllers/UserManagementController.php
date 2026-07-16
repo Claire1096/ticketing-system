@@ -7,13 +7,19 @@ use Illuminate\Http\Request;
 
 class UserManagementController extends Controller
 {
-    public function index()
+   public function index(Request $request) 
     {
-        $users = User::latest()->get();
+        $query = User::query();
+
+        // Filter by department if selected
+        if ($request->filled('department')) {
+            $query->where('department', $request->department);
+        }
+
+        $users = $query->latest()->paginate(15)->withQueryString();
 
         return view('users.index', compact('users'));
     }
-
     public function create()
     {
         return view('users.create');
@@ -61,6 +67,9 @@ public function update(Request $request, User $user)
     return redirect()->route('users.index')
         ->with('success', 'User updated successfully.');
 }
+
+
+
     public function destroy(User $user)
     {
         if ($user->id === auth()->id()) {
@@ -72,4 +81,6 @@ public function update(Request $request, User $user)
         return redirect()->route('users.index')
             ->with('success', 'User deleted.');
     }
+
+    
 }

@@ -13,6 +13,52 @@
                     No tickets have been submitted yet.
                 </div>
             @else
+<!-- Month and Year Filter Bar -->
+<div class="bg-white p-4 rounded-lg shadow mb-6 flex justify-end">
+    <form action="{{ route('tickets.all') }}" method="GET" class="flex items-center gap-3">
+        
+        <!-- Month Filter -->
+        <div class="flex items-center gap-2">
+            <label for="month" class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Month:</label>
+            <select name="month" id="month" onchange="this.form.submit()" class="text-sm rounded-md border-gray-300 shadow-sm focus:border-pink-500 focus:ring-pink-500">
+                <option value="">All Months</option>
+                <option value="01" {{ request('month') == '01' ? 'selected' : '' }}>January</option>
+                <option value="02" {{ request('month') == '02' ? 'selected' : '' }}>February</option>
+                <option value="03" {{ request('month') == '03' ? 'selected' : '' }}>March</option>
+                <option value="04" {{ request('month') == '04' ? 'selected' : '' }}>April</option>
+                <option value="05" {{ request('month') == '05' ? 'selected' : '' }}>May</option>
+                <option value="06" {{ request('month') == '06' ? 'selected' : '' }}>June</option>
+                <option value="07" {{ request('month') == '07' ? 'selected' : '' }}>July</option>
+                <option value="08" {{ request('month') == '08' ? 'selected' : '' }}>August</option>
+                <option value="09" {{ request('month') == '09' ? 'selected' : '' }}>September</option>
+                <option value="10" {{ request('month') == '10' ? 'selected' : '' }}>October</option>
+                <option value="11" {{ request('month') == '11' ? 'selected' : '' }}>November</option>
+                <option value="12" {{ request('month') == '12' ? 'selected' : '' }}>December</option>
+            </select>
+        </div>
+
+        <!-- Year Filter -->
+        <div class="flex items-center gap-2">
+            <label for="year" class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Year:</label>
+            <select name="year" id="year" onchange="this.form.submit()" class="text-sm rounded-md border-gray-300 shadow-sm focus:border-pink-500 focus:ring-pink-500">
+                <option value="">All Years</option>
+                <!-- Generates a dynamic range from 5 years ago up to next year -->
+                @for ($y = date('Y') + 1; $y >= date('Y') - 5; $y--)
+                    <option value="{{ $y }}" {{ request('year') == $y ? 'selected' : '' }}>
+                        {{ $y }}
+                    </option>
+                @endfor
+            </select>
+        </div>
+
+        <!-- Clear Button (Shows up if either filter is active) -->
+        @if(request()->filled('month') || request()->filled('year'))
+            <a href="{{ route('tickets.all') }}" class="text-xs text-pink-600 hover:text-pink-700 underline font-medium ml-1">
+                Clear Filters
+            </a>
+        @endif
+    </form>
+</div>
                 <div class="space-y-3">
                     @foreach ($tickets as $ticket)
                         <a href="{{ route('tickets.show', $ticket) }}"

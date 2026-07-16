@@ -23,4 +23,23 @@ class FaqController extends Controller
 
         return view('faqs.index', compact('faqs', 'category', 'search'));
     }
+
+    public function create()
+    {
+        return view('faqs.create');
+    }
+
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'question' => 'required|string|max:255',
+            'answer' => 'required|string',
+            'category' => 'required|in:Hardware,Software,Network,Printer,Internet,Others',
+        ]);
+
+        Faq::create($validated);
+
+        return redirect()->route('faqs.index')
+            ->with('success', 'FAQ added successfully.');
+    }
 }

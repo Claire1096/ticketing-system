@@ -1,16 +1,32 @@
 @props(['align' => 'right', 'width' => '48', 'contentClasses' => 'py-1 bg-white'])
 
 @php
-$alignmentClasses = match ($align) {
-    'left' => 'ltr:origin-top-left rtl:origin-top-right start-0',
-    'top' => 'origin-top',
-    default => 'ltr:origin-top-right rtl:origin-top-left end-0',
-};
+// 1. Define Alignment Logic
+switch ($align) {
+    case 'left':
+        $alignmentClasses = 'origin-top-left left-0';
+        break;
+    case 'top':
+        $alignmentClasses = 'origin-top';
+        break;
+    case 'right':
+    default:
+        $alignmentClasses = 'origin-top-right right-0';
+        break;
+}
 
-$width = match ($width) {
-    '48' => 'w-48',
-    default => $width,
-};
+// 2. Define Width Logic
+switch ($width) {
+    case '48':
+        $width = 'w-48';
+        break;
+    case '96':
+        $width = 'w-96';
+        break;
+    default:
+        $width = 'w-48';
+        break;
+}
 @endphp
 
 <div class="relative" x-data="{ open: false }" @click.outside="open = false" @close.stop="open = false">

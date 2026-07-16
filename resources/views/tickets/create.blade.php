@@ -65,20 +65,7 @@
     </div>
     <p class="text-sm text-gray-500 mt-2">Critical: production line or point-of-sale is down. Choose this only if work has stopped.</p>
 </div>
-{{-- Department --}}
-<div>
-    <label for="department" class="block text-sm font-bold text-gray-800 mb-2">Department</label>
-    <select name="department" id="department" class="w-full border-gray-300 rounded-md shadow-sm focus:border-pink-200 focus:ring-pink-500" required>
-        <option value="">Select your department</option>
-        <option value="Sales and Marketing" {{ old('department') === 'Sales and Marketing' ? 'selected' : '' }}>Sales and Marketing</option>
-        <option value="Logistics" {{ old('department') === 'Logistics' ? 'selected' : '' }}>Logistics</option>
-        <option value="Human Resource" {{ old('department') === 'Human Resource' ? 'selected' : '' }}>Human Resource</option>
-        <option value="Finance and Accounting" {{ old('department') === 'Finance and Accounting' ? 'selected' : '' }}>Finance and Accounting</option>
-        <option value="IT Dept" {{ old('department') === 'IT Dept' ? 'selected' : '' }}>IT Dept</option>
-        <option value="Production" {{ old('department') === 'Production' ? 'selected' : '' }}>Production</option>
-        <option value="Executives" {{ old('department') === 'Executives' ? 'selected' : '' }}>Executives</option>
-    </select>
-</div>
+
                  
 
                     {{-- Description --}}

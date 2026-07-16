@@ -54,17 +54,19 @@
                 Remember me
             </label>
 
-            @if (Route::has('password.request'))
-                <a href="{{ route('password.request') }}" class="text-pink-600 font-semibold hover:underline">
-                    Forgot password?
-                </a>
-            @endif
+           
         </div>
 
         <button type="submit"
             class="w-full bg-pink-300 hover:bg-pink-400 text-gray-800 font-bold py-3 rounded-full transition">
             Login
         </button>
+
+        <div class="text-center mt-4">
+    <a href="{{ route('password.request') }}" class="text-xs text-gray-400 hover:text-gray-600 hover:underline">
+        IT Support account recovery
+    </a>
+</div>
 
     </form>
 </x-guest-layout>

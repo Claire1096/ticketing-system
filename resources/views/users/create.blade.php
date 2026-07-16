@@ -45,7 +45,7 @@
                         <label class="block text-sm font-bold text-gray-700 mb-2">Role</label>
                         <select name="role" class="w-full border-gray-300 rounded-md shadow-sm" required>
                             <option value="employee">Employee</option>
-                            <option value="technician">Admin</option>
+                            <option value="technician">IT Support</option>
                         </select>
                     </div>
 

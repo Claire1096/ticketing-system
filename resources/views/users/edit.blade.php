@@ -48,18 +48,12 @@
                         <label class="block text-sm font-bold text-gray-700 mb-2">Role</label>
                         <select name="role" class="w-full border-gray-300 rounded-md shadow-sm" required>
                             <option value="employee" {{ $user->role === 'employee' ? 'selected' : '' }}>Employee</option>
-                            <option value="technician" {{ $user->role === 'technician' ? 'selected' : '' }}>Technician</option>
+                            <option value="technician" {{ $user->role === 'technician' ? 'selected' : '' }}>IT Support</option>
                         </select>
                     </div>
-<div>
-    <label class="block text-sm font-bold text-gray-700 mb-2">Role</label>
-    <select name="role" class="w-full border-gray-300 rounded-md shadow-sm" required>
-        <option value="employee" {{ $user->role === 'employee' ? 'selected' : '' }}>Employee</option>
-        <option value="technician" {{ $user->role === 'technician' ? 'selected' : '' }}>Technician</option>
-    </select>
-</div>
 
-<div>
+
+    <div>
     <label class="block text-sm font-bold text-gray-700 mb-2">Department</label>
     <select name="department" class="w-full border-gray-300 rounded-md shadow-sm" required>
         <option value="">Select department</option>

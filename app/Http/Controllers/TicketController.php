@@ -6,14 +6,33 @@ use App\Models\Ticket;
 use Illuminate\Http\Request;
 use App\Notifications\TicketViewedNotification;
 
+
 class TicketController extends Controller
 {
-    // Show the logged-in user's tickets (the "My Tickets" page)
-    public function index()
+   // Show the logged-in user's tickets (and let technicians see and filter all tickets)
+    public function index(Request $request)
     {
-        $tickets = Ticket::where('submitted_by', auth()->id())
-            ->latest()
-            ->get();
+        $user = auth()->user();
+        
+        // 1. If technician, query all tickets. Otherwise, query only the logged-in user's tickets.
+        if ($user->role === 'technician') {
+            $query = Ticket::query()->with('user');
+        } else {
+            $query = Ticket::where('submitted_by', $user->id);
+        }
+
+        // 2. Apply Month Filter
+        if ($request->filled('month')) {
+            $query->whereMonth('created_at', $request->month);
+        }
+
+        // 3. Apply Year Filter
+        if ($request->filled('year')) {
+            $query->whereYear('created_at', $request->year);
+        }
+
+        // 4. Fetch the filtered results with pagination
+        $tickets = $query->latest()->paginate(15)->withQueryString();
 
         return view('tickets.index', compact('tickets'));
     }
@@ -124,4 +143,26 @@ class TicketController extends Controller
         return redirect()->route('tickets.index')
             ->with('success', 'Ticket deleted.');
     }
+public function all(Request $request)
+{
+
+    dd("I am inside the ALL method!");
+    $query = Ticket::query()->with('user');
+
+    // 1. Filter by Month if the user selected one
+    if ($request->filled('month')) {
+        $query->whereMonth('created_at', $request->month);
+    }
+
+    // 2. Filter by Year if the user selected one
+    if ($request->filled('year')) {
+        $query->whereYear('created_at', $request->year);
+    }
+
+    // 3. Get the paginated results with the query parameters attached
+    $tickets = $query->latest()->paginate(15)->withQueryString();
+
+    return view('tickets.all', compact('tickets'));
+}
+    
 }
