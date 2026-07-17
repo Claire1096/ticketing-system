@@ -34,7 +34,7 @@ class AuthenticatedSessionController extends Controller
         return redirect()->route('technician.dashboard');
     }
 
-    return redirect()->route('tickets.index');
+    return redirect()->route('dashboard');
 }
 
     /**

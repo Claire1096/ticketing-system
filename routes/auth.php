@@ -51,4 +51,8 @@ Route::middleware('auth')->group(function () {
 
     Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])
         ->name('logout');
+
+    Route::get('/notifications/unread-count', function () {
+    return response()->json(['count' => auth()->user()->unreadNotifications->count()]);
+})->name('notifications.unread-count');
 });

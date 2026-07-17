@@ -60,9 +60,9 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
                         </svg>
                         @if (auth()->user()->unreadNotifications->count() > 0)
-                            <span class="absolute top-0 right-0 inline-flex items-center justify-center px-1.5 py-0.5 text-[10px] font-bold leading-none text-white bg-red-600 rounded-full">
-                                {{ auth()->user()->unreadNotifications->count() }}
-                            </span>
+                            <span id="notification-badge" class="absolute top-0 right-0 inline-flex items-center justify-center px-1.5 py-0.5 text-[10px] font-bold leading-none text-white bg-red-600 rounded-full {{ auth()->user()->unreadNotifications->count() > 0 ? '' : 'hidden' }}">
+    {{ auth()->user()->unreadNotifications->count() }}
+</span>
                         @endif
                     </button>
 
@@ -171,4 +171,41 @@
             </div>
         </div>
     </div>
+    <script>
+    let lastNotificationCount = {{ auth()->user()->unreadNotifications->count() }};
+
+    function playNotificationSound() {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const oscillator = ctx.createOscillator();
+        const gain = ctx.createGain();
+        oscillator.connect(gain);
+        gain.connect(ctx.destination);
+        oscillator.frequency.value = 880;
+        gain.gain.setValueAtTime(0.15, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.4);
+        oscillator.start();
+        oscillator.stop(ctx.currentTime + 0.4);
+    }
+
+    setInterval(() => {
+        fetch('{{ route('notifications.unread-count') }}')
+            .then(res => res.json())
+            .then(data => {
+                if (data.count > lastNotificationCount) {
+                    playNotificationSound();
+                }
+                lastNotificationCount = data.count;
+
+                const badge = document.getElementById('notification-badge');
+                if (badge) {
+                    if (data.count > 0) {
+                        badge.textContent = data.count;
+                        badge.classList.remove('hidden');
+                    } else {
+                        badge.classList.add('hidden');
+                    }
+                }
+            });
+    }, 15000); // checks every 15 seconds
+</script>
 </nav>

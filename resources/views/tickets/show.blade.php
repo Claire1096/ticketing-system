@@ -1,29 +1,41 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex justify-between items-center">
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                Ticket #{{ str_pad($ticket->id, 4, '0', STR_PAD_LEFT) }}
-            </h2>
-           <div class="flex gap-4 items-center">
+   <div class="flex justify-end items-center gap-4">
+
     @if (auth()->user()->role === 'technician')
-        <a href="{{ route('tickets.edit', $ticket) }}" class="text-sm text-amber-700 font-semibold hover:underline">
+
+        <a href="{{ route('tickets.edit', $ticket) }}" 
+           class="text-sm text-pink-700 font-semibold hover:underline">
             Update ticket
         </a>
+
     @else
-        <form method="POST" action="{{ route('tickets.destroy', $ticket) }}"
-            onsubmit="return confirm('Delete this ticket? This cannot be undone.');">
-            @csrf
-            @method('DELETE')
-            <button type="submit" class="text-sm text-red-600 font-semibold hover:underline">
-                Delete ticket
-            </button>
-        </form>
+
+        @if (!in_array($ticket->status, ['Resolved']))
+            <form method="POST" action="{{ route('tickets.destroy', $ticket) }}"
+                onsubmit="return confirm('Delete this ticket? This cannot be undone.');">
+
+                @csrf
+                @method('DELETE')
+
+                <button type="submit" 
+                    class="text-sm text-red-600 font-semibold hover:underline">
+                    Delete ticket
+                </button>
+
+            </form>
+        @endif
+
     @endif
-    <a href="{{ route('tickets.index') }}" class="text-sm text-gray-500 hover:text-gray-800">
+
+    <a href="{{ route('tickets.index') }}" 
+       class="text-sm text-gray-500 hover:text-gray-800">
         &larr; Back to my tickets
     </a>
+
 </div>
-        </div>
+
+
     </x-slot>
 
     <div class="py-8">

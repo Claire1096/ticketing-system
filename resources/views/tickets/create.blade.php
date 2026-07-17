@@ -22,22 +22,32 @@
 
                 <form method="POST" action="{{ route('tickets.store') }}" class="space-y-8">
                     @csrf
+{{-- Category --}}
+<div>
+    <label class="block text-sm font-bold text-gray-800 mb-3">Category</label>
+    <div class="grid grid-cols-3 gap-3">
+        @foreach (['Hardware' => '🖥️', 'Software' => '🧩', 'Network' => '📶', 'Printer' => '🖨️', 'Internet' => '🌐', 'Others' => '⋯'] as $cat => $icon)
 
-                    {{-- Category --}}
-                    <div>
-                        <label class="block text-sm font-bold text-gray-800 mb-3">Category</label>
-                        <div class="grid grid-cols-3 gap-3">
-                            @foreach (['Hardware' => '🖥️', 'Software' => '🧩', 'Network' => '📶', 'Printer' => '🖨️', 'Internet' => '🌐', 'Others' => '⋯'] as $cat => $icon)
-                            <label class="flex flex-col items-center gap-2 border-2 rounded-lg p-4 cursor-pointer hover:border-gray-400 has-[:checked]:border-pink-600 has-[:checked]:bg-pink-50">
-                                <input type="radio" name="category" value="{{ $cat }}" class="hidden"
-                                    {{ old('category') === $cat ? 'checked' : '' }} required>
-                                <span class="text-xl">{{ $icon }}</span>
-                                <span class="text-sm font-semibold text-gray-700">{{ $cat }}</span>
-                            </label>
-                            @endforeach
-                        </div>
-                    </div>
-
+        <label class="flex flex-col items-center gap-2 border-2 rounded-lg p-4 cursor-pointer hover:border-gray-400 has-[:checked]:border-pink-600 has-[:checked]:bg-pink-50">
+            <input type="radio" name="category" value="{{ $cat }}" class="hidden"
+                {{ old('category') === $cat ? 'checked' : '' }}
+                @if ($cat === 'Others')
+                    onchange="document.getElementById('description').focus(); document.getElementById('description').scrollIntoView({behavior: 'smooth', block: 'center'});"
+                @endif
+                required>
+            <span class="text-xl">{{ $icon }}</span>
+            <span class="text-sm font-semibold text-gray-700">{{ $cat }}</span>
+        </label>
+        @endforeach
+    </div>
+</div>
+{{-- Department (auto-filled from account) --}}
+<div>
+    <label class="block text-sm font-bold text-gray-800 mb-2">Department</label>
+    <div class="w-full border border-gray-200 bg-gray-50 rounded-md px-4 py-3 text-sm text-gray-600">
+        {{ auth()->user()->department ?? 'Not set — contact IT Support' }}
+    </div>
+</div>
                    {{-- Priority --}}
 <div>
     <label class="block text-sm font-bold text-gray-800 mb-3">Priority</label>

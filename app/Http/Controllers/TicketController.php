@@ -46,17 +46,21 @@ class TicketController extends Controller
     // Handle the form submission
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'description' => 'required|string',
-            'category' => 'required|in:Hardware,Software,Network,Printer,Internet,Others',
-            'department' => 'required|in:Sales and Marketing,Logistics,Human Resource,Finance and Accounting,IT Dept,Production,Executives',
-            'priority' => 'required|in:Low,Medium,High,Critical',
-        ]);
+    $validated = $request->validate([
+    'description' => 'required|string',
+    'category' => 'required|in:Hardware,Software,Network,Printer,Internet,Others',
+    'priority' => 'required|in:Low,Medium,High,Critical',
+]);
 
-        $validated['submitted_by'] = auth()->id();
-        $validated['status'] = 'Open';
+    $validated['submitted_by'] = auth()->id();
+    $validated['department'] = auth()->user()->department;
+    
+    // Automatically grab the logged-in user's department so the field stays populated in the DB!
+    $validated['department'] = auth()->user()->department; 
+    
+    $validated['status'] = 'Open';
 
-        $ticket = Ticket::create($validated);
+    $ticket = Ticket::create($validated);
 
         $technicians = \App\Models\User::where('role', 'technician')->get();
         foreach ($technicians as $technician) {
@@ -101,48 +105,57 @@ class TicketController extends Controller
     }
 
     // Update a ticket (status change, technician remarks, assignment)
-    public function update(Request $request, Ticket $ticket)
-    {
-        $validated = $request->validate([
-            'status' => 'required|in:Open,In Progress,Pending,Resolved,Closed',
-            'technician_remarks' => 'nullable|string',
-            'assigned_to' => 'nullable|exists:users,id',
-        ]);
+  public function update(Request $request, Ticket $ticket)
+{
+    $validated = $request->validate([
+        'status' => 'required|in:Open,In Progress,Pending,Resolved,Closed',
+        'technician_remarks' => 'nullable|string',
+        'assigned_to' => 'nullable|exists:users,id',
+    ]);
 
-        $justResolved = $validated['status'] === 'Resolved' && $ticket->status !== 'Resolved';
+    $justResolved = $validated['status'] === 'Resolved' && $ticket->status !== 'Resolved';
+    $justInProgress = $validated['status'] === 'In Progress' && $ticket->status !== 'In Progress';
 
-        if ($justResolved) {
-            $validated['resolved_at'] = now();
-        }
-
-        // Mark the very first time a technician touches this ticket
-        if (is_null($ticket->first_response_at)) {
-            $validated['first_response_at'] = now();
-        }
-
-        $ticket->update($validated);
-
-        if ($justResolved) {
-            $ticket->submittedBy->notify(new \App\Notifications\TicketResolvedNotification($ticket));
-        }
-
-        return redirect()->route('tickets.show', $ticket)
-            ->with('success', 'Ticket updated.');
+    if ($justResolved) {
+        $validated['resolved_at'] = now();
     }
 
-    public function destroy(Ticket $ticket)
-    {
-        $user = auth()->user();
-
-        if ($user->role !== 'technician' && $ticket->submitted_by !== $user->id) {
-            abort(403, 'You can only delete tickets you submitted.');
-        }
-
-        $ticket->delete();
-
-        return redirect()->route('tickets.index')
-            ->with('success', 'Ticket deleted.');
+    // Mark the very first time a technician touches this ticket
+    if (is_null($ticket->first_response_at)) {
+        $validated['first_response_at'] = now();
     }
+
+    $ticket->update($validated);
+
+    if ($justInProgress) {
+        $ticket->submittedBy->notify(new \App\Notifications\TicketInProgressNotification($ticket));
+    }
+
+    if ($justResolved) {
+        $ticket->submittedBy->notify(new \App\Notifications\TicketResolvedNotification($ticket));
+    }
+
+    return redirect()->route('tickets.show', $ticket)
+        ->with('success', 'Ticket updated.');
+}
+
+   public function destroy(Ticket $ticket)
+{
+    $user = auth()->user();
+
+    if ($user->role !== 'technician' && $ticket->submitted_by !== $user->id) {
+        abort(403, 'You can only delete tickets you submitted.');
+    }
+
+    \Illuminate\Notifications\DatabaseNotification::query()
+        ->where('data->ticket_id', $ticket->id)
+        ->delete();
+
+    $ticket->delete();
+
+    return redirect()->route('tickets.index')
+        ->with('success', 'Ticket deleted.');
+}
 public function all(Request $request)
 {
 
