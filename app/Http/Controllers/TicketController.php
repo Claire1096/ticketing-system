@@ -16,10 +16,10 @@ class TicketController extends Controller
         
         // 1. If technician, query all tickets. Otherwise, query only the logged-in user's tickets.
         if ($user->role === 'technician') {
-            $query = Ticket::query()->with('user');
-        } else {
-            $query = Ticket::where('submitted_by', $user->id);
-        }
+    $query = Ticket::query()->with(['submittedBy', 'assignedTo']);
+} else {
+    $query = Ticket::where('submitted_by', $user->id);
+}
 
         // 2. Apply Month Filter
         if ($request->filled('month')) {
@@ -81,15 +81,13 @@ class TicketController extends Controller
         }
 
         // --- NEW: Trigger viewed notification when a Technician opens the ticket for the first time ---
-        if ($user->role === 'technician' && !$ticket->is_viewed_by_tech) {
-            $ticket->update([
-                'is_viewed_by_tech' => true,
-                'tech_viewed_at' => now(),
-            ]);
-
-            // Notify the user who submitted the ticket
-            $ticket->submittedBy->notify(new TicketViewedNotification($ticket, $user->name));
-        }
+     if ($user->role === 'technician' && !$ticket->is_viewed_by_tech) {
+    $ticket->update([
+        'is_viewed_by_tech' => true,
+        'tech_viewed_at' => now(),
+    ]);
+    $ticket->submittedBy->notify(new TicketViewedNotification($ticket, $user->name));
+}
         // --------------------------------------------------------------------------------------------
 
         $user->unreadNotifications

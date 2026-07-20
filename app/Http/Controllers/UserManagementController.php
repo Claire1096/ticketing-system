@@ -20,6 +20,7 @@ class UserManagementController extends Controller
 
         return view('users.index', compact('users'));
     }
+    
     public function create()
     {
         return view('users.create');
@@ -48,13 +49,42 @@ public function edit(User $user)
 
 public function update(Request $request, User $user)
 {
-  $validated = $request->validate([
-    'name' => 'required|string|max:255',
-    'email' => 'required|email|unique:users,email,' . $user->id,
-    'role' => 'required|in:employee,technician',
-    'department' => 'required|in:Sales and Marketing,Logistics,Human Resource,Finance and Accounting,IT Dept,Production,Executives',
-    'password' => 'nullable|string|min:8',
-]);
+    $isDemotingLastTechnician = $user->role === 'technician'
+        && $request->input('role') !== 'technician';
+
+    $rules = [
+        'name' => 'required|string|max:255',
+        'email' => 'required|email|unique:users,email,' . $user->id,
+        'role' => 'required|in:employee,technician',
+        'department' => 'required|in:Sales and Marketing,Logistics,Human Resource,Finance and Accounting,IT Dept,Production,Executives',
+        'password' => 'nullable|string|min:8',
+    ];
+
+    // Only require the explicit confirmation checkbox when this change would
+    // actually strip the technician (IT support) role from this user.
+    if ($isDemotingLastTechnician) {
+        $rules['confirm_role_change'] = 'required|accepted';
+    }
+
+    $validated = $request->validate($rules);
+
+    // Guard: don't allow the last technician account to be changed to a
+    // non-technician role — that would lock everyone out of the IT pages.
+    if ($isDemotingLastTechnician) {
+        $otherTechnicianCount = User::where('role', 'technician')
+            ->where('id', '!=', $user->id)
+            ->count();
+
+        if ($otherTechnicianCount === 0) {
+            return back()
+                ->withInput()
+                ->withErrors([
+                    'role' => 'You cannot change this account\'s role to Employee — it is currently the only Technician (IT support) account. Assign the Technician role to another user first.',
+                ]);
+        }
+    }
+
+    unset($validated['confirm_role_change']);
 
     if (!empty($validated['password'])) {
         $validated['password'] = bcrypt($validated['password']);
@@ -74,6 +104,19 @@ public function update(Request $request, User $user)
     {
         if ($user->id === auth()->id()) {
             abort(403, "You can't delete your own account.");
+        }
+
+        // Guard: don't allow deletion of the last remaining technician
+        // (IT support) account — same risk as demoting them.
+        if ($user->role === 'technician') {
+            $otherTechnicianCount = User::where('role', 'technician')
+                ->where('id', '!=', $user->id)
+                ->count();
+
+            if ($otherTechnicianCount === 0) {
+                return redirect()->route('users.index')
+                    ->with('error', 'You cannot delete this account — it is currently the only Technician (IT support) account. Assign the Technician role to another user first.');
+            }
         }
 
         $user->delete();

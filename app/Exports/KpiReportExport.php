@@ -21,16 +21,16 @@ class KpiReportExport implements FromCollection, WithHeadings, WithMapping, With
         $this->endDate = $endDate;
     }
 
-    public function collection()
-    {
-        $query = Ticket::query();
+public function collection()
+{
+    $query = Ticket::query();
 
-        if ($this->startDate && $this->endDate) {
-            $query->whereBetween('created_at', [$this->startDate, $this->endDate]);
-        }
-
-        return $query->latest()->get();
+    if ($this->startDate && $this->endDate) {
+        $query->whereBetween('created_at', [$this->startDate, $this->endDate]);
     }
+
+    return $query->latest()->get();
+}
 
     public function headings(): array
     {

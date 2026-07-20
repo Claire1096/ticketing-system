@@ -1,6 +1,6 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-pink-700 leading-tight">
+        <h2 class="font-semibold text-lg text-pink-700 leading-tight">
             All Tickets
         </h2>
     </x-slot>

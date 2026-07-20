@@ -20,7 +20,7 @@
                     </div>
                 @endif
 
-                <form method="POST" action="{{ route('users.update', $user) }}" class="space-y-5">
+                <form method="POST" action="{{ route('users.update', $user) }}" class="space-y-5" id="editUserForm">
                     @csrf
                     @method('PUT')
 
@@ -46,12 +46,26 @@
 
                     <div>
                         <label class="block text-sm font-bold text-gray-700 mb-2">Role</label>
-                        <select name="role" class="w-full border-gray-300 rounded-md shadow-sm" required>
-                            <option value="employee" {{ $user->role === 'employee' ? 'selected' : '' }}>Employee</option>
-                            <option value="technician" {{ $user->role === 'technician' ? 'selected' : '' }}>IT Support</option>
+                        <select name="role" id="roleSelect" data-original="{{ $user->role }}"
+                            class="w-full border-gray-300 rounded-md shadow-sm" required>
+                            <option value="employee" {{ old('role', $user->role) === 'employee' ? 'selected' : '' }}>Employee</option>
+                            <option value="technician" {{ old('role', $user->role) === 'technician' ? 'selected' : '' }}>IT Support</option>
                         </select>
                     </div>
 
+                    {{-- Shown only when changing an existing IT Support account away from that role --}}
+                    <div id="roleChangeWarning" class="hidden bg-yellow-50 border border-yellow-200 rounded-md p-4">
+                        <p class="text-sm text-yellow-800 mb-3">
+                            <strong>Heads up:</strong> this will remove Technician (IT Support) access from
+                            {{ $user->name }}. If this is your only remaining IT Support account, the change will
+                            be blocked — make sure another user has the Technician role first.
+                        </p>
+                        <label class="flex items-start gap-2 text-sm text-yellow-900">
+                            <input type="checkbox" name="confirm_role_change" value="1"
+                                {{ old('confirm_role_change') ? 'checked' : '' }} class="mt-1">
+                            <span>I'm sure I want to change this account's role.</span>
+                        </label>
+                    </div>
 
     <div>
     <label class="block text-sm font-bold text-gray-700 mb-2">Department</label>
@@ -77,4 +91,32 @@
             </div>
         </div>
     </div>
+
+    <script>
+        (function () {
+            const roleSelect = document.getElementById('roleSelect');
+            const warning = document.getElementById('roleChangeWarning');
+            const confirmCheckbox = warning.querySelector('input[name="confirm_role_change"]');
+            const wasTechnician = roleSelect.dataset.original === 'technician';
+
+            function toggleWarning() {
+                const leavingTechnician = wasTechnician && roleSelect.value !== 'technician';
+                warning.classList.toggle('hidden', !leavingTechnician);
+                if (!leavingTechnician) {
+                    confirmCheckbox.checked = false;
+                }
+            }
+
+            roleSelect.addEventListener('change', toggleWarning);
+            toggleWarning(); // handle page load after a validation error (old('role') may already differ)
+
+            document.getElementById('editUserForm').addEventListener('submit', function (e) {
+                const leavingTechnician = wasTechnician && roleSelect.value !== 'technician';
+                if (leavingTechnician && !confirmCheckbox.checked) {
+                    e.preventDefault();
+                    confirmCheckbox.focus();
+                }
+            });
+        })();
+    </script>
 </x-app-layout>

@@ -8,19 +8,62 @@
     <div class="py-8">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
 
-            {{-- Download report button --}}
-            <div class="flex justify-end">
-                <a href="{{ route('technician.kpi-report') }}"
-                    class="inline-flex items-center gap-2 bg-pink-700 hover:bg-pink-800 text-white font-bold px-5 py-2.5 rounded-md text-sm transition">
-                    Download Report
-                </a>
-            </div>
+          {{-- Month filter (left) + Download report with date filter (right) --}}
+<div class="flex justify-between items-end">
+    <form method="GET" id="dashboardMonthForm" class="flex items-end gap-2">
+        <div>
+            <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Month</label>
+            <select
+                name="month"
+                onchange="this.form.submit()"
+                class="text-sm border-gray-300 rounded-full shadow-sm bg-white font-semibold px-4 py-2.5">
+                @foreach ($monthOptions as $value => $label)
+                    <option value="{{ $value }}" {{ $selectedMonth === $value ? 'selected' : '' }}>
+                        {{ $label }}
+                    </option>
+                @endforeach
+            </select>
+        </div>
+        <div>
+            <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Year</label>
+            <select
+                name="year"
+                onchange="this.form.submit()"
+                class="text-sm border-gray-300 rounded-full shadow-sm bg-white font-semibold px-4 py-2.5">
+                @foreach ($yearOptions as $year)
+                    <option value="{{ $year }}" {{ $selectedYear === $year ? 'selected' : '' }}>
+                        {{ $year }}
+                    </option>
+                @endforeach
+            </select>
+        </div>
+    </form>
+
+    <form method="GET" action="{{ route('technician.kpi-report') }}" class="flex items-end gap-2 bg-white border border-gray-200 rounded-lg p-3">
+        <div>
+            <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">From</label>
+            <input type="date" name="start_date" class="text-sm border-gray-300 rounded-md">
+        </div>
+        <div>
+            <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">To</label>
+            <input type="date" name="end_date" class="text-sm border-gray-300 rounded-md">
+        </div>
+        <button type="submit"
+            class="inline-flex items-center gap-2 bg-pink-700 hover:bg-pink-800 text-white font-bold px-5 py-2.5 rounded-md text-sm transition">
+            Download Report
+        </button>
+    </form>
+</div>
 
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
 
                 {{-- LEFT: 2/3 width --}}
                 <div class="lg:col-span-2 space-y-6">
-
+<div class="mb-4">
+    <h3 class="text-lg font-bold text-gray-800">
+        Dashboard Metrics
+    </h3>
+</div>
                     {{-- Two big donut stats --}}
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div class="bg-[#F5E9F7] rounded-xl p-6 flex items-center gap-5">
@@ -56,39 +99,43 @@
                         </div>
                     </div>
 
-                    {{-- 3 small metric cards --}}
-                    <div class="grid grid-cols-3 gap-4">
-                        <div class="bg-white border border-[#F3D9F0] rounded-xl p-5">
-                            <div class="text-[11px] font-bold text-gray-500 uppercase mb-2">Avg. Response Time</div>
-                            <div class="text-xl font-extrabold text-gray-800">
-                                @if (is_null($avgResponseHours))
-                                    —
-                                @elseif ($avgResponseHours < 1)
-                                    {{ round($avgResponseHours * 60) }} <span class="text-xs font-medium text-gray-400">min</span>
-                                @else
-                                    {{ number_format($avgResponseHours, 1) }} <span class="text-xs font-medium text-gray-400">hrs</span>
-                                @endif
-                            </div>
-                        </div>
-                        <div class="bg-white border border-[#F3D9F0] rounded-xl p-5">
-                            <div class="text-[11px] font-bold text-gray-500 uppercase mb-2">Avg. Resolution Time</div>
-                            <div class="text-xl font-extrabold text-gray-800">
-                                @if (is_null($avgResolutionHours))
-                                    —
-                                @elseif ($avgResolutionHours < 1)
-                                    {{ round($avgResolutionHours * 60) }} <span class="text-xs font-medium text-gray-400">min</span>
-                                @else
-                                    {{ number_format($avgResolutionHours, 1) }} <span class="text-xs font-medium text-gray-400">hrs</span>
-                                @endif
-                            </div>
-                        </div>
-                        <div class="bg-white border border-[#F3D9F0] rounded-xl p-5">
-                            <div class="text-[11px] font-bold text-gray-500 uppercase mb-2">Resolved This Month</div>
-                            <div class="text-xl font-extrabold text-green-600">
-                                {{ $resolvedThisMonth }} <span class="text-xs font-medium text-green-400">tickets</span>
-                            </div>
-                        </div>
-                    </div>
+
+<div class="text-sm font-bold text-gray-700">
+    Performance Metrics
+</div>
+{{-- 3 small metric cards --}}
+<div class="grid grid-cols-3 gap-4">
+                       <div class="bg-white border border-[#F3D9F0] rounded-xl p-5">
+    <div class="text-[11px] font-bold text-gray-500 uppercase mb-2">Avg. Response Time</div>
+    <div class="text-xl font-extrabold text-gray-800">
+        @if (is_null($avgResponseHoursMonth))
+            —
+        @elseif ($avgResponseHoursMonth < 1)
+            {{ round($avgResponseHoursMonth * 60) }} <span class="text-xs font-medium text-gray-400">min</span>
+        @else
+            {{ number_format($avgResponseHoursMonth, 1) }} <span class="text-xs font-medium text-gray-400">hrs</span>
+        @endif
+    </div>
+</div>
+<div class="bg-white border border-[#F3D9F0] rounded-xl p-5">
+    <div class="text-[11px] font-bold text-gray-500 uppercase mb-2">Avg. Resolution Time</div>
+    <div class="text-xl font-extrabold text-gray-800">
+        @if (is_null($avgResolutionHoursMonth))
+            —
+        @elseif ($avgResolutionHoursMonth < 1)
+            {{ round($avgResolutionHoursMonth * 60) }} <span class="text-xs font-medium text-gray-400">min</span>
+        @else
+            {{ number_format($avgResolutionHoursMonth, 1) }} <span class="text-xs font-medium text-gray-400">hrs</span>
+        @endif
+    </div>
+</div>
+<div class="bg-white border border-[#F3D9F0] rounded-xl p-5">
+    <div class="text-[11px] font-bold text-gray-500 uppercase mb-2">Resolved ({{ $selectedMonthLabel }})</div>
+    <div class="text-xl font-extrabold text-green-600">
+        {{ $monthlyResolved }} <span class="text-xs font-medium text-green-400">tickets</span>
+    </div>
+</div>
+</div>
 
                     {{-- Ticket by Category / Ticket by Department, side by side --}}
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -180,20 +227,15 @@
                     <div class="bg-pink-100 rounded-xl p-6">
     <div class="flex justify-between items-center mb-4">
         <div class="text-base font-bold text-gray-800">Monthly Ticket History</div>
-        <form method="GET" id="monthFilterForm">
-            <select name="month" onchange="document.getElementById('monthFilterForm').submit()"
-                class="text-sm border-pink-300 rounded-md shadow-sm bg-gray-200 font-semibold px-2 py-1">
-                @foreach ($monthOptions as $value => $label)
-                    <option value="{{ $value }}" {{ $selectedMonth === $value ? 'selected' : '' }}>{{ $label }}</option>
-                @endforeach
-            </select>
-        </form>
+       <div class="text-sm font-semibold text-gray-600">
+    {{ $selectedMonthLabel }}
+</div>
     </div>
 
     <div class="bg-[#E5E5E5] rounded-lg p-5">
         @if ($monthlyTotal === 0)
             <div class="text-center text-sm text-gray-500 py-8">
-                No tickets in {{ $monthOptions[$selectedMonth] }}.
+                No tickets in {{ $selectedMonthLabel }}.
             </div>
         @else
             <div class="flex items-center gap-5">
@@ -239,4 +281,15 @@
             });
         </script>
     @endif
+
+                </div>
+                {{-- /RIGHT --}}
+
+            </div>
+            {{-- /grid grid-cols-1 lg:grid-cols-3 --}}
+
+        </div>
+        {{-- /max-w-7xl --}}
+    </div>
+    {{-- /py-8 --}}
 </x-app-layout>

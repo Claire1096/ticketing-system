@@ -20,6 +20,8 @@ class Ticket extends Model
     'technician_remarks',
     'resolved_at',
     'first_response_at',
+    'is_viewed_by_tech',
+    'tech_viewed_at',
 ];
 
     protected $casts = [

@@ -15,6 +15,14 @@ return Application::configure(basePath: dirname(__DIR__))
     $middleware->alias([
         'technician' => \App\Http\Middleware\EnsureIsTechnician::class,
     ]);
+
+    // Runs on every web request, before route-specific middleware such as
+    // the 'technician' alias. Checks whether the logged-in user's
+    // role/credentials were changed after their session began, and if so,
+    // forces them back to the login page.
+    $middleware->web(append: [
+        \App\Http\Middleware\EnsureSessionIsCurrent::class,
+    ]);
 })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(

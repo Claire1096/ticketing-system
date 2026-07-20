@@ -11,35 +11,31 @@ use Illuminate\View\View;
 
 class AuthenticatedSessionController extends Controller
 {
-    /**
-     * Display the login view.
-     */
     public function create(): View
     {
         return view('auth.login');
     }
 
-    /**
-     * Handle an incoming authentication request.
-     */
     public function store(LoginRequest $request): RedirectResponse
-{
-    $request->authenticate();
+    {
+        $request->authenticate();
 
-    $request->session()->regenerate();
+        $request->session()->regenerate();
 
-    $user = $request->user();
+        // Record when this session started, so EnsureSessionIsCurrent can
+        // detect if the user's role/credentials were changed afterward and
+        // force a re-login.
+        $request->session()->put('login_at', now()->timestamp);
 
-    if ($user->role === 'technician') {
-        return redirect()->route('technician.dashboard');
+        $user = $request->user();
+
+        if ($user->role === 'technician') {
+            return redirect()->route('technician.dashboard');
+        }
+
+        return redirect()->route('dashboard');
     }
 
-    return redirect()->route('dashboard');
-}
-
-    /**
-     * Destroy an authenticated session.
-     */
     public function destroy(Request $request): RedirectResponse
     {
         Auth::guard('web')->logout();
